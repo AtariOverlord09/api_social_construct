@@ -23,8 +23,8 @@ class PostViewSet(viewsets.ModelViewSet):
     ('api/posts/{post_id}) - для получения объекта модели Post по id.
     """
     serializer_class = PostSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter,]
-    flterset_fields = ['author', 'pub_date',]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, ]
+    flterset_fields = ['author', 'pub_date', ]
     search_fields = ['text', ]
     pagination_class = pagination.LimitOffsetPagination
 
@@ -79,9 +79,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     """Вьюсет модели Follow для реализации POST и GET запросов."""
     serializer_class = FollowSerializer
-    filter_backends = [filters.SearchFilter,]
-    search_fields = ['following__username',]
-    permission_classes = [AuthorOr405Permission,]
+    filter_backends = [filters.SearchFilter, ]
+    search_fields = ['following__username', ]
+    permission_classes = [AuthorOr405Permission, ]
     pagination_classes = None
 
     def get_queryset(self):
