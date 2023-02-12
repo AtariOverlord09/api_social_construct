@@ -11,7 +11,7 @@ from api.serializers import (
     GroupSerializer,
     PostSerializer,
 )
-from api.permissions import AuthorOr405Permission
+from api.permissions import AuthorOr401Permission
 from posts.models import Follow, Group, Post
 
 
@@ -81,7 +81,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     filter_backends = [filters.SearchFilter, ]
     search_fields = ['following__username', ]
-    permission_classes = [AuthorOr405Permission, ]
+    permission_classes = [AuthorOr401Permission, ]
     pagination_classes = None
 
     def get_queryset(self):

@@ -27,7 +27,7 @@ class IsAuthorizedOrReadOnlyPermission(permissions.BasePermission):
         return (request.user.is_authenticated and request.user == obj.author)
 
 
-class AuthorOr405Permission(permissions.BasePermission):
+class AuthorOr401Permission(permissions.BasePermission):
     """Класс для разрешения доступа к данным только для автора."""
 
     def has_permission(self, request, view):
