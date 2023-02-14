@@ -24,7 +24,7 @@ class IsAuthorizedOrReadOnlyPermission(permissions.BasePermission):
         """
         if request.method in permissions.SAFE_METHODS:
             return True
-        return (request.user.is_authenticated and request.user == obj.author)
+        return request.user.is_authenticated and request.user == obj.author
 
 
 class AuthorOr401Permission(permissions.BasePermission):
@@ -39,4 +39,7 @@ class AuthorOr401Permission(permissions.BasePermission):
         """
         Метод позволяет только автору иметь доступ к объекту.
         """
-        return request.user == obj.user
+        return (
+            request.user == obj.user
+            and request.method == ('POST' or "POST")
+        )

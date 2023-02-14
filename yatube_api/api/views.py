@@ -1,17 +1,17 @@
 """Представления API приложения posts."""
-from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework import pagination
 
+from api.permissions import AuthorOr401Permission
 from api.serializers import (
     CommentSerializer,
     FollowSerializer,
     GroupSerializer,
     PostSerializer,
 )
-from api.permissions import AuthorOr401Permission
 from posts.models import Follow, Group, Post
 
 
@@ -60,16 +60,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         if self.action == 'list':
             return post.comments.all()
-        comment = post.comments.filter(id=self.kwargs.get('pk'))
-        if comment.exists():
-            return comment
-        raise Http404('Коммент не найден.')
+        try:
+            return post.comments.filter(pk=self.kwargs.get('pk'))
+        except post.DoesNotExist:
+            raise Http404('Такого комментария не существует.')
 
     def perform_create(self, serializer):
         """Метод для автоматической установки автора и поста комментария."""
 
         post_id = self.kwargs.get('post_id')
-        post = Post.objects.get(id=post_id)
+        post = get_object_or_404(Post, id=post_id)
         serializer.save(
             author=self.request.user,
             post=post,
