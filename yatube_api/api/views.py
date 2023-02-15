@@ -1,5 +1,4 @@
 """Представления API приложения posts."""
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
@@ -60,10 +59,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         if self.action == 'list':
             return post.comments.all()
-        try:
-            return post.comments.filter(pk=self.kwargs.get('pk'))
-        except post.DoesNotExist:
-            raise Http404('Такого комментария не существует.')
+        comment = get_object_or_404(post.comments, pk=self.kwargs.get('pk'))
+        return comment.post.comments.all()
 
     def perform_create(self, serializer):
         """Метод для автоматической установки автора и поста комментария."""
@@ -83,6 +80,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     search_fields = ['following__username', ]
     permission_classes = [AuthorOr401Permission, ]
     pagination_classes = None
+    http_method_names = ['get', 'post']
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)

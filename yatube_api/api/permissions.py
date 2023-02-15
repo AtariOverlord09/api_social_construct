@@ -39,7 +39,4 @@ class AuthorOr401Permission(permissions.BasePermission):
         """
         Метод позволяет только автору иметь доступ к объекту.
         """
-        return (
-            request.user == obj.user
-            and request.method == ('POST' or "POST")
-        )
+        return request.user == obj.user
