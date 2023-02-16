@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework import pagination
+from rest_framework import mixins
 
 from api.permissions import AuthorOr401Permission
 from api.serializers import (
@@ -73,14 +74,20 @@ class CommentViewSet(viewsets.ModelViewSet):
         )
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class RetrieveCreateViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    permission_classes = [AuthorOr401Permission, ]
+
+
+class FollowViewSet(RetrieveCreateViewSet):
     """Вьюсет модели Follow для реализации POST и GET запросов."""
     serializer_class = FollowSerializer
     filter_backends = [filters.SearchFilter, ]
     search_fields = ['following__username', ]
-    permission_classes = [AuthorOr401Permission, ]
     pagination_classes = None
-    http_method_names = ['get', 'post']
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
